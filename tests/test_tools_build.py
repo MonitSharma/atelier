@@ -46,6 +46,25 @@ def test_edit_requires_unique_match(tmp_path, monkeypatch) -> None:
     assert r["error_type"] == "string_not_unique"
 
 
+def test_write_reports_python_syntax(tmp_path, monkeypatch) -> None:
+    monkeypatch.setattr("tools.files.PROJECT_ROOT", tmp_path.resolve())
+    ok = run_write_file({"path": "good.py", "content": "def f():\n    return 1\n"})
+    assert ok["syntax_ok"] is True
+
+    bad = run_write_file({"path": "bad.py", "content": "def f():\nreturn 1\n"})
+    assert bad["status"] == "success"        # the write still happens
+    assert bad["syntax_ok"] is False         # but the agent is warned
+    assert "syntax_error" in bad
+
+
+def test_edit_reports_broken_syntax(tmp_path, monkeypatch) -> None:
+    monkeypatch.setattr("tools.files.PROJECT_ROOT", tmp_path.resolve())
+    run_write_file({"path": "m.py", "content": "def f():\n    return 1\n"})
+    # Replace the indented body with an unindented line -> breaks the function.
+    r = run_edit_file({"path": "m.py", "old_string": "    return 1", "new_string": "return 1"})
+    assert r["syntax_ok"] is False
+
+
 def test_write_rejects_path_escape(tmp_path, monkeypatch) -> None:
     monkeypatch.setattr("tools.files.PROJECT_ROOT", tmp_path.resolve())
     r = run_write_file({"path": "../evil.txt", "content": "nope"})

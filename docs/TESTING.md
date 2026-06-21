@@ -222,6 +222,57 @@ material for the eval harness (next milestone) and for debugging failures.
 
 ---
 
+## 5b. Memory — it remembers across sessions
+
+```bash
+pytest tests/test_memory.py -q              # incl. a cross-'session' persistence test
+atelier remember "I prefer Apache-2.0 and pytest" --tags prefs
+atelier recall "what license does the user want?"
+atelier memory                              # list all stored facts
+```
+**Expect:** `recall` returns the stored fact ranked by a similarity score, even
+though the query wording differs. Prove persistence across processes:
+```bash
+python -c "from agent.memory import get_memory; get_memory().remember('the brain model is qwen3:14b')"
+python -c "from agent.memory import get_memory; print(get_memory().recall('which model reasons?')[0].text)"
+```
+**Expect:** the second (separate) process recalls what the first stored.
+
+## 5c. Hybrid retrieval + reranking
+
+```bash
+pytest tests/test_retrieval.py -q           # BM25 + RRF fusion logic (no model)
+
+# Dense-only vs hybrid vs reranked — compare what comes back:
+ATELIER_USE_HYBRID=0 atelier ask --show-context "exact term only in one note"
+atelier ask --show-context "exact term only in one note"           # hybrid (default)
+ATELIER_RERANK=1   atelier ask --show-context "exact term only in one note"
+```
+**Expect:** hybrid surfaces chunks containing rare exact terms that dense-only
+can miss; reranking reorders the top results by a sharper relevance score
+(downloads a small model the first time).
+
+## 5d. MCP server — use the tools from another client
+
+```bash
+# Full client↔server handshake over stdio (no external client needed):
+ATELIER_NO_BANNER=1 python - <<'PY'
+import asyncio, sys
+from mcp.client.stdio import stdio_client, StdioServerParameters
+from mcp.client.session import ClientSession
+async def main():
+    p = StdioServerParameters(command=sys.executable, args=["-m","atelier.mcp_server"])
+    async with stdio_client(p) as (r,w):
+        async with ClientSession(r,w) as s:
+            await s.initialize()
+            print("tools:", [t.name for t in (await s.list_tools()).tools])
+            print((await s.call_tool("calculator", {"expression":"6*7"})).content[0].text)
+asyncio.run(main())
+PY
+```
+**Expect:** a list of 11 tools and `calculator(6*7)` returning `42`. To wire it
+into Claude Desktop/Code, point an MCP server entry at the command `atelier mcp`.
+
 ## 6b. Reliability eval — measure, don't guess
 
 This is what makes Atelier a *system* rather than a demo: frozen task suites with
@@ -248,6 +299,15 @@ watch the score drop:
 # temporarily sabotage retrieval, re-run docqa, then revert
 ATELIER_RETRIEVAL_K=1 atelier eval --mode docqa
 ```
+
+### Regression gate
+```bash
+atelier eval --gate          # runs, then fails (exit 1) if any metric dropped
+```
+**Expect:** after a clean run it prints "no regressions vs. last report"; if a
+change lowered `correct` / `retrieval_hit` / `solved`, it prints the deltas and
+exits non-zero — wire this into a pre-commit or CI step. The gate logic itself is
+unit-tested in `tests/test_eval.py`.
 
 ## 7. One-command sanity sweep
 

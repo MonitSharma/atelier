@@ -49,6 +49,8 @@ Rules:
 - For coding tasks: call `repo_map` first to understand the layout, `read_file` to \
 inspect, `write_file`/`edit_file` to change code, and `test_runner` to PROVE it works.
 - NEVER claim a code change works unless `test_runner` returned passed_clean = true.
+- After `write_file`/`edit_file` on a .py file, if the result has syntax_ok = false, \
+your edit broke the file — fix the syntax (mind indentation) before anything else.
 - If a tool returns an error, read the message and adjust. Do not repeat an identical failing call.
 - Keep `arguments` valid against each tool's input schema. Emit only the JSON object.
 """
@@ -101,6 +103,7 @@ class ReActAgent:
         verbose: bool = False,
         log: bool = True,
         on_event: Any = None,
+        use_memory: bool = False,
     ) -> None:
         self.registry = registry or create_default_registry()
         self.role = role
@@ -108,6 +111,20 @@ class ReActAgent:
         self.verbose = verbose
         self.log = log
         self.on_event = on_event  # optional callable(event: dict) for UIs
+        self.use_memory = use_memory
+
+    def _recall_preamble(self, goal: str) -> str:
+        """Pull relevant long-term memories into the system context."""
+        try:
+            from agent.memory import get_memory
+
+            memories = get_memory().recall(goal, k=5)
+        except Exception:  # noqa: BLE001 - memory is best-effort, never fatal
+            return ""
+        if not memories:
+            return ""
+        lines = "\n".join(f"- {m.text}" for m in memories)
+        return f"\n\nRelevant things you remember about the user / past work:\n{lines}\n"
 
     def _emit(self, event: dict[str, Any]) -> None:
         if self.verbose:
@@ -126,6 +143,8 @@ class ReActAgent:
 
     def run(self, goal: str) -> AgentResult:
         system = SYSTEM_TEMPLATE.format(tools=self.registry.prompt_description())
+        if self.use_memory:
+            system += self._recall_preamble(goal)
         messages: list[dict[str, Any]] = [
             {"role": "system", "content": system},
             {"role": "user", "content": goal},

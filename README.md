@@ -64,7 +64,65 @@ atelier agent "Using my notes, summarize the project's non-goals"
 
 Each run streams its steps and writes a full trace to `data/traces/`. Add
 `--shell` to enable the (powerful, lightly-guarded) shell tool, `--heavy` for the
-bigger model, `--max-steps N` to bound the loop.
+bigger model, `--max-steps N` to bound the loop, `--memory` to recall relevant
+long-term memories first.
+
+## Memory — it remembers across sessions
+
+Atelier has persistent, semantic long-term memory (its own local vector
+collection):
+
+```bash
+atelier remember "I prefer Apache-2.0 and pytest over unittest" --tags prefs
+atelier recall "what license does the user want?"
+atelier memory                              # list everything stored
+atelier agent --memory "scaffold a new module the way I like it"
+```
+
+The agent also has `remember`/`recall` tools, so it can choose to persist facts
+mid-task.
+
+## Hybrid retrieval
+
+Knowledge mode fuses **dense** (embedding) and **lexical** (BM25) retrieval via
+Reciprocal Rank Fusion — meaning *and* exact terms. An optional local
+cross-encoder reranker sharpens the top results:
+
+```bash
+ATELIER_RERANK=1 atelier ask "..."         # enable reranking (downloads ~80MB once)
+ATELIER_USE_HYBRID=0 atelier ask "..."     # dense-only, for comparison
+```
+
+## Use Atelier's tools from any MCP client
+
+```bash
+atelier mcp        # serves the full toolbox over MCP (stdio)
+```
+
+Point Claude Desktop/Code (or any MCP host) at the command `atelier mcp` to give
+it Atelier's local tools: semantic note search, file edit, sandboxed code exec,
+the pytest runner, repo map, and memory.
+
+## Routing — a fine-tuned cheap component
+
+A LoRA-fine-tuned **0.5B** model classifies a task easy/hard so easy subtasks can
+go to the cheap worker and the 14B brain is reserved for hard ones:
+
+```bash
+atelier route "what is 47 * 89?"                       # -> easy  -> qwen3:4b
+atelier route "refactor auth across the codebase"      # -> hard  -> qwen3:14b
+make train-router                                      # reproduce the fine-tune (~1 min)
+```
+
+The fine-tune lifts the 0.5B router from **43.8% → 100%** held-out accuracy. See
+[`docs/WRITEUP.md`](docs/WRITEUP.md).
+
+## Reproduce everything
+
+```bash
+make reproduce        # env -> models -> tests -> eval -> train + evaluate router
+make help             # all tasks
+```
 
 ## Testing
 
@@ -85,8 +143,10 @@ atelier eval                 # score both modes, save a JSON report
 atelier eval --judge         # add a local LLM-as-judge for groundedness
 ```
 
-Current baseline (M3 Pro, `qwen3:14b`): **doc-QA 6/6 correct, code 2/2 solved**.
-Full results, setup, and honest caveats in [`docs/EVAL.md`](docs/EVAL.md).
+Current baseline (M3 Pro, `qwen3:14b`): **doc-QA 8/8 correct** (citation 6/8),
+**code 2/3 solved** — the unsolved task maps the local model's reliability
+boundary (multi-line structural edits). Full results and honest analysis in
+[`docs/EVAL.md`](docs/EVAL.md).
 
 ## Configuration
 
@@ -99,16 +159,21 @@ Everything is overridable via environment variables (prefix `ATELIER_`) or a
 | `ATELIER_EMBED_MODEL` | `BAAI/bge-base-en-v1.5` | local embedding model |
 | `ATELIER_RETRIEVAL_K` | `6` | chunks retrieved per query |
 | `ATELIER_CHUNK_SIZE` | `1000` | chunk size (characters) |
+| `ATELIER_USE_HYBRID` | `true` | fuse dense + BM25 retrieval (RRF) |
+| `ATELIER_RERANK` | `false` | cross-encoder reranking (downloads a small model) |
 
 ## Layout
 
 ```
-atelier/   config + CLI
-agent/     ReAct loop, brain (Ollama client), memory
-tools/     tool registry + individual tools (calculator, file read, …)
-rag/       knowledge mode: ingest → chunk → embed → store → retrieve → answer
-eval/      reliability harness (frozen task suites)   [planned]
-docs/      design notes and the eventual writeup
+atelier/   config, CLI, MCP server, banner
+agent/     ReAct engine (react.py), brain (Ollama client), long-term memory
+tools/     tool registry + tools (files, code_exec, test_runner, repo_map,
+           search, search_notes, remember/recall, calculator, shell)
+rag/       knowledge mode: ingest → chunk → embed → store → retrieve (hybrid) → answer
+eval/      reliability harness: frozen suites, metrics, runner, regression gate, routing
+models/    router/ — LoRA fine-tune (data, train, evaluate, adapter)
+scripts/   reproduce.sh   ·   Makefile (make help)
+docs/      ARCHITECTURE.md, TESTING.md, EVAL.md, WRITEUP.md
 ```
 
 ## License

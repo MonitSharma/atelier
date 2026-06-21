@@ -60,6 +60,18 @@ class Settings(BaseSettings):
     chunk_overlap: int = 150  # characters
     retrieval_k: int = 6
 
+    # --- Hybrid retrieval + reranking -------------------------------------
+    #: Fuse dense (vector) + lexical (BM25) results via Reciprocal Rank Fusion.
+    use_hybrid: bool = True
+    #: How many candidates each arm contributes before fusion/reranking.
+    hybrid_candidates: int = 20
+    #: RRF constant; larger = flatter weighting across ranks.
+    rrf_k: int = 60
+    #: Opt-in cross-encoder reranker (downloads ~80MB on first use). Off by
+    #: default so retrieval stays dependency-light; turn on for best quality.
+    rerank: bool = False
+    rerank_model: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+
     # --- Paths (all under the repo, all local) ----------------------------
     root: Path = ROOT
     data_dir: Path = ROOT / "data"

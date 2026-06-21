@@ -5,6 +5,7 @@ from tools.calculator import CALCULATOR_TOOL
 from tools.code_exec import CODE_EXEC_TOOL
 from tools.files import EDIT_FILE_TOOL, READ_FILE_TOOL, WRITE_FILE_TOOL
 from tools.knowledge import SEARCH_NOTES_TOOL
+from tools.memory_tools import RECALL_TOOL, REMEMBER_TOOL
 from tools.repo_map import REPO_MAP_TOOL
 from tools.search import SEARCH_TOOL
 from tools.shell import SHELL_TOOL
@@ -94,6 +95,8 @@ def create_default_registry(include_shell: bool = False) -> ToolRegistry:
         REPO_MAP_TOOL,
         CODE_EXEC_TOOL,
         TEST_RUNNER_TOOL,
+        REMEMBER_TOOL,
+        RECALL_TOOL,
     ):
         registry.register(tool)
     if include_shell:

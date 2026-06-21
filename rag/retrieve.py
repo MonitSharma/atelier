@@ -10,10 +10,69 @@ from rag.embed import get_embedder
 from rag.store import VectorStore
 
 
-def retrieve(query: str, k: int | None = None, store: VectorStore | None = None) -> list[dict[str, Any]]:
+def _rrf_fuse(
+    dense: list[dict[str, Any]],
+    lexical: list[dict[str, Any]],
+    k: int,
+    rrf_k: int,
+) -> list[dict[str, Any]]:
+    """Reciprocal Rank Fusion: combine two ranked lists by rank, not by score.
+
+    RRF is robust precisely because it ignores the (incomparable) raw scores of
+    dense vs. BM25 and uses only positions: score = sum 1/(rrf_k + rank).
+    """
+    table: dict[str, dict[str, Any]] = {}
+    for rank, hit in enumerate(dense):
+        entry = table.setdefault(hit["text"], {"hit": hit, "score": 0.0})
+        entry["score"] += 1.0 / (rrf_k + rank)
+    for rank, hit in enumerate(lexical):
+        entry = table.setdefault(hit["text"], {"hit": hit, "score": 0.0})
+        entry["score"] += 1.0 / (rrf_k + rank)
+    fused = sorted(table.values(), key=lambda e: -e["score"])
+    out: list[dict[str, Any]] = []
+    for entry in fused[:k]:
+        hit = dict(entry["hit"])
+        hit["fused_score"] = round(entry["score"], 5)
+        out.append(hit)
+    return out
+
+
+def retrieve(
+    query: str,
+    k: int | None = None,
+    store: VectorStore | None = None,
+    *,
+    hybrid: bool | None = None,
+    rerank: bool | None = None,
+) -> list[dict[str, Any]]:
+    """Retrieve the top-k chunks for a query.
+
+    Pipeline: dense (always) [+ BM25 fused via RRF if hybrid] [→ cross-encoder
+    rerank if enabled]. Defaults come from config; pass explicit flags to override.
+    """
     store = store or VectorStore()
-    embedding = get_embedder().embed_query(query)
-    return store.query(embedding, k=k)
+    k = k or settings.retrieval_k
+    use_hybrid = settings.use_hybrid if hybrid is None else hybrid
+    do_rerank = settings.rerank if rerank is None else rerank
+
+    n = max(settings.hybrid_candidates, k)
+    pool = n if do_rerank else k
+
+    dense = store.query(get_embedder().embed_query(query), k=n)
+    if use_hybrid:
+        from rag.lexical import get_bm25
+
+        lexical = get_bm25(store).search(query, n)
+        candidates = _rrf_fuse(dense, lexical, pool, settings.rrf_k)
+    else:
+        candidates = dense[:pool]
+
+    if do_rerank and candidates:
+        from rag.rerank import rerank as _do_rerank
+
+        candidates = _do_rerank(query, candidates, k)
+
+    return candidates[:k]
 
 
 def format_context(hits: list[dict[str, Any]], max_chars: int | None = None) -> str:

@@ -37,6 +37,18 @@
       "question": "Roughly how much memory does a 13B-14B parameter model need according to my notes table?",
       "expected_contains": ["10 gb", "12 gb"],
       "expected_source": "myNotes.md"
+    },
+    {
+      "id": "router-role",
+      "question": "What is the role of the fine-tuned small model in the project?",
+      "expected_contains": ["worker"],
+      "expected_source": "Project.md"
+    },
+    {
+      "id": "privacy-feature",
+      "question": "Why is running everything locally treated as a feature, not just a constraint?",
+      "expected_contains": ["never leave"],
+      "expected_source": "Project.md"
     }
   ]
 }

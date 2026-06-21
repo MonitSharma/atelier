@@ -73,6 +73,27 @@ class VectorStore:
             })
         return hits
 
+    def upsert_raw(
+        self,
+        ids: list[str],
+        documents: list[str],
+        embeddings: list[list[float]],
+        metadatas: list[dict[str, Any]],
+    ) -> int:
+        """Low-level upsert with caller-supplied ids (used by memory)."""
+        if not ids:
+            return 0
+        self._collection.upsert(ids=ids, documents=documents,
+                                embeddings=embeddings, metadatas=metadatas)
+        return len(ids)
+
+    def delete(self, ids: list[str]) -> None:
+        if ids:
+            self._collection.delete(ids=ids)
+
+    def get_all(self) -> dict[str, Any]:
+        return self._collection.get(include=["documents", "metadatas"])
+
     def count(self) -> int:
         return self._collection.count()
 

@@ -26,8 +26,11 @@ console = Console()
 
 
 @app.callback()
-def _root() -> None:
+def _root(ctx: typer.Context) -> None:
     """Show the banner before any command (set ATELIER_NO_BANNER=1 to hide)."""
+    # The MCP server owns stdout for JSON-RPC — never print over it.
+    if ctx.invoked_subcommand == "mcp":
+        return
     from atelier.banner import print_banner
 
     print_banner(console)
@@ -180,6 +183,7 @@ def agent(
     goal: str = typer.Argument(..., help="The task for the agent to accomplish."),
     heavy: bool = typer.Option(False, "--heavy", help="Use the heavy reasoning model."),
     shell: bool = typer.Option(False, "--shell", help="Allow the (powerful) shell tool."),
+    memory: bool = typer.Option(False, "--memory", help="Recall relevant long-term memories first."),
     max_steps: int = typer.Option(10, "--max-steps", help="Max reasoning/tool steps."),
     verbose: bool = typer.Option(True, "--verbose/--quiet", help="Stream each step."),
 ) -> None:
@@ -202,7 +206,8 @@ def agent(
 
     registry = create_default_registry(include_shell=shell)
     runner = ReActAgent(registry, role=role, max_steps=max_steps,
-                        verbose=False, on_event=on_event if verbose else None)
+                        verbose=False, on_event=on_event if verbose else None,
+                        use_memory=memory)
     with console.status("Atelier is working..."):
         result = runner.run(goal)
 
@@ -220,9 +225,12 @@ def agent(
 def eval(
     mode: str = typer.Option("all", "--mode", help="all | docqa | code"),
     judge: bool = typer.Option(False, "--judge", help="Add the local LLM-as-judge (slower)."),
+    gate: bool = typer.Option(False, "--gate", help="Fail (exit 1) if any metric regressed vs the last report."),
 ) -> None:
     """Run the reliability eval suites and print + save a report."""
-    from eval.run_eval import run_all, save_report
+    from eval.run_eval import compare_reports, latest_report, run_all, save_report
+
+    prev = latest_report() if gate else None
 
     with console.status(f"Running eval ({mode})... this calls the local model, be patient."):
         report = run_all(mode=mode, judge=judge)
@@ -249,6 +257,91 @@ def eval(
                       f"avg_steps={agg['steps']:.1f}  avg_tool_errors={agg['tool_errors']:.1f}")
 
     console.print(f"[dim]Report: {path}[/]")
+
+    if gate:
+        if prev is None:
+            console.print("[yellow]Gate: no prior report to compare against — baseline saved.[/]")
+        else:
+            regressions = compare_reports(prev, report)
+            if regressions:
+                console.print(Panel("\n".join(regressions), title="⚠ Regressions detected",
+                                    border_style="red"))
+                raise typer.Exit(code=1)
+            console.print("[green]Gate: no regressions vs. last report.[/]")
+
+
+@app.command()
+def remember(
+    text: str = typer.Argument(..., help="The fact to store in long-term memory."),
+    tags: str = typer.Option("", "--tags", help="Comma-separated tags."),
+) -> None:
+    """Store a durable fact (persists across sessions)."""
+    from agent.memory import get_memory
+
+    tag_list = [t.strip() for t in tags.split(",") if t.strip()]
+    mid = get_memory().remember(text, tag_list)
+    console.print(f"[green]Remembered[/] [dim]({mid})[/]: {text}")
+
+
+@app.command()
+def recall(
+    query: str = typer.Argument(..., help="What to recall."),
+    k: int = typer.Option(5, "-k", help="How many memories to return."),
+) -> None:
+    """Search long-term memory by meaning."""
+    from agent.memory import get_memory
+
+    memories = get_memory().recall(query, k=k)
+    if not memories:
+        console.print("[yellow]No memories yet. Add one with `atelier remember`.[/]")
+        return
+    table = Table(title=f"Recalled for: {query}")
+    table.add_column("score"); table.add_column("memory"); table.add_column("tags", style="dim")
+    for m in memories:
+        table.add_row(f"{m.score}", m.text, ", ".join(m.tags))
+    console.print(table)
+
+
+@app.command()
+def memory() -> None:
+    """List everything in long-term memory."""
+    from agent.memory import get_memory
+
+    mems = get_memory().all()
+    if not mems:
+        console.print("[yellow]Memory is empty.[/]")
+        return
+    table = Table(title=f"Long-term memory ({len(mems)} facts)")
+    table.add_column("id", style="dim"); table.add_column("memory"); table.add_column("tags", style="dim")
+    for m in mems:
+        table.add_row(m.id, m.text, ", ".join(m.tags))
+    console.print(table)
+
+
+@app.command()
+def route(
+    task: str = typer.Argument(..., help="A task to classify and route."),
+    backend: str = typer.Option("auto", "--backend", help="auto | finetuned | heuristic"),
+) -> None:
+    """Classify a task easy/hard and show which model it routes to."""
+    from agent.router import Router
+
+    r = Router(backend=backend)
+    with console.status("Routing..."):
+        difficulty = r.classify(task)
+        model = r.route(task)
+    color = "green" if difficulty == "easy" else "yellow"
+    console.print(Panel(
+        f"difficulty: [{color}]{difficulty}[/]\nroute to: [bold]{model}[/]\nbackend: [dim]{r.name}[/]",
+        title="Router decision", border_style=color))
+
+
+@app.command()
+def mcp(shell: bool = typer.Option(False, "--shell", help="Expose the shell tool too.")) -> None:
+    """Run Atelier's tools as an MCP server (stdio). For MCP clients."""
+    from atelier.mcp_server import main as mcp_main
+
+    mcp_main(include_shell=shell)
 
 
 @app.command(name="tools")

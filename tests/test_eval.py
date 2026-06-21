@@ -50,6 +50,25 @@ def test_code_task_solved_when_agent_fixes() -> None:
     assert res["agent_finished"] == 1
 
 
+def test_regression_gate_flags_drops() -> None:
+    from eval.run_eval import compare_reports
+
+    prev = {"docqa": {"aggregate": {"correct": 1.0, "retrieval_hit": 1.0}},
+            "code": {"aggregate": {"solved": 1.0}}}
+    cur = {"docqa": {"aggregate": {"correct": 0.8, "retrieval_hit": 1.0}},
+           "code": {"aggregate": {"solved": 1.0}}}
+    regressions = compare_reports(prev, cur)
+    assert len(regressions) == 1
+    assert "docqa.correct" in regressions[0]
+
+
+def test_regression_gate_passes_when_stable() -> None:
+    from eval.run_eval import compare_reports
+
+    rep = {"code": {"aggregate": {"solved": 1.0}}}
+    assert compare_reports(rep, rep) == []
+
+
 def test_code_task_unsolved_when_agent_does_nothing() -> None:
     res = run_code_task(
         CODE_DIR / "add_bug",

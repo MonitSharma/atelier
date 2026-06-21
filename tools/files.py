@@ -113,6 +113,23 @@ READ_FILE_TOOL = Tool(
 )
 
 
+def _py_syntax_report(path: Path, content: str) -> dict[str, Any]:
+    """If the file is Python, compile it and report whether it still parses.
+
+    Surfaced in the tool result so the agent learns *immediately* that an edit
+    broke the file (e.g. a botched indentation), instead of only finding out a
+    few steps later when tests fail to even collect.
+    """
+    if path.suffix != ".py":
+        return {}
+    try:
+        compile(content, str(path), "exec")
+        return {"syntax_ok": True}
+    except SyntaxError as exc:
+        return {"syntax_ok": False,
+                "syntax_error": f"{exc.msg} (line {exc.lineno})"}
+
+
 def run_write_file(arguments: dict[str, Any]) -> dict[str, Any]:
     """Create or overwrite a UTF-8 text file inside the project workspace."""
     path = arguments.get("path")
@@ -147,6 +164,7 @@ def run_write_file(arguments: dict[str, Any]) -> dict[str, Any]:
         "tool": "write_file",
         "path": path,
         "bytes_written": len(content.encode("utf-8")),
+        **_py_syntax_report(resolved_path, content),
     }
 
 
@@ -195,8 +213,10 @@ def run_edit_file(arguments: dict[str, Any]) -> dict[str, Any]:
             "message": f"old_string occurs {occurrences} times; make it unique.",
         }
 
-    resolved_path.write_text(text.replace(old_string, new_string), encoding="utf-8")
-    return {"status": "success", "tool": "edit_file", "path": path, "replacements": 1}
+    new_text = text.replace(old_string, new_string)
+    resolved_path.write_text(new_text, encoding="utf-8")
+    return {"status": "success", "tool": "edit_file", "path": path, "replacements": 1,
+            **_py_syntax_report(resolved_path, new_text)}
 
 
 WRITE_FILE_TOOL = Tool(

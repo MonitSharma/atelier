@@ -147,6 +147,36 @@ def run_all(mode: str = "all", judge: bool = False) -> dict[str, Any]:
     return report
 
 
+#: Metrics where higher is better (used by the regression gate).
+HIGHER_BETTER = {"correct", "retrieval_hit", "cited", "solved",
+                 "judge_correct", "judge_grounded"}
+
+
+def latest_report() -> dict[str, Any] | None:
+    """The most recent saved report, or None if there are none yet."""
+    out_dir = settings.data_dir / "eval_reports"
+    if not out_dir.exists():
+        return None
+    reports = sorted(out_dir.glob("report_*.json"))
+    if not reports:
+        return None
+    return json.loads(reports[-1].read_text())
+
+
+def compare_reports(prev: dict[str, Any], cur: dict[str, Any], tol: float = 0.01) -> list[str]:
+    """Return human-readable regressions where a 'higher is better' metric dropped."""
+    regressions: list[str] = []
+    for mode in ("docqa", "code"):
+        if mode not in prev or mode not in cur:
+            continue
+        pa = prev[mode].get("aggregate", {})
+        ca = cur[mode].get("aggregate", {})
+        for key in ca:
+            if key in HIGHER_BETTER and key in pa and ca[key] < pa[key] - tol:
+                regressions.append(f"{mode}.{key}: {pa[key]:.3f} -> {ca[key]:.3f}")
+    return regressions
+
+
 def save_report(report: dict[str, Any]) -> Path:
     settings.ensure_dirs()
     out_dir = settings.data_dir / "eval_reports"

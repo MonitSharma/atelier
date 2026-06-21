@@ -25,25 +25,72 @@ Reports are written to `data/eval_reports/report_*.json`.
 | Hardware | MacBook M3 Pro, 36 GB |
 | Suites | `eval/tasks_docqa/` (6 Qs), `eval/tasks_code/` (2 tasks) |
 
-## Baseline results — 2026-06-21
+## Results — 2026-06-21 (expanded suite: 8 doc-QA + 3 code)
 
-### Knowledge mode (doc-QA, 6 questions over the real corpus)
+### Knowledge mode (doc-QA, 8 questions over the real corpus)
 
 | Metric | Score |
 |---|---|
-| Correct (keyword coverage ≥ 0.5) | **100%** (6/6) |
-| Retrieval hit@6 (expected source retrieved) | **100%** (6/6) |
-| Cited sources | **100%** (6/6) |
+| Correct (keyword coverage ≥ 0.5) | **100%** (8/8) |
+| Retrieval hit@k (expected source retrieved) | **100%** (8/8) |
+| Cited sources | **75%** (6/8) |
 
-### Build mode (code, 2 fix-the-failing-test tasks)
+Retrieval and correctness are saturated on this corpus; the gap is **citation
+discipline** — on 2 of 8 answers the model gave the right content but omitted the
+`[n]` markers. A concrete, trackable target for prompt work.
 
-| Task | Solved | Steps | Tool errors |
+### Build mode (code, 3 fix-the-failing-test tasks)
+
+| Task | Solved | Steps | Note |
 |---|---|---|---|
-| add_bug (arithmetic) | ✅ | 5 | 0 |
-| offbyone (slice off-by-one) | ✅ | 6 | 0 |
-| **Overall** | **100%** (2/2) | avg 5.5 | 0.0 |
+| add_bug (arithmetic) | ✅ | 5 | clean single-line fix |
+| offbyone (slice off-by-one) | ✅ | 6 | clean single-line fix |
+| median_bug (even-length averaging) | ❌ | 12 (budget hit) | see finding below |
+| **Overall** | **67%** (2/3) | avg 7.7 | tool_errors 0.0 |
 
-Total wall-clock for the full run: ~3 min.
+#### Finding: the reliability boundary is multi-line edits
+`median_bug` requires replacing one line with a multi-line `if/else` that averages
+the two middle elements. `qwen3:14b` is **unreliable** here: in one run it wrote
+correct logic but with broken indentation (`return` outside the function →
+`SyntaxError`); in another it failed to land a working edit within the 12-step
+budget and left the original line. It reliably handles *single-line* fixes but
+not *structural* multi-line edits at this size — a clean, honest demonstration of
+the local-model reasoning ceiling (PROJECT.md §3, §11).
+
+**Mitigation already shipped from this finding:** `write_file`/`edit_file` now
+run a Python `compile()` check and return `syntax_ok` / `syntax_error`, so the
+agent is told immediately when an edit breaks the file (and the system prompt
+instructs it to fix syntax first). This removed the "can't even collect the
+tests" failure mode; the underlying multi-line-edit difficulty remains and is the
+right next target (more steps, the `--heavy` model, or better edit ergonomics).
+
+Total wall-clock for the full run: ~6 min.
+
+### Router (Phase 6) — fine-tuned cheap component
+
+A LoRA fine-tune of `Qwen2.5-0.5B` (256 synthetic examples, 200 iters, ~1 min,
+peak 1.5 GB) as a task-difficulty classifier:
+
+| | Held-out accuracy |
+|---|---|
+| Base 0.5B (zero-shot) | 43.8% |
+| + LoRA fine-tune | **100%** |
+| Lift | **+56.2 pts** |
+
+Routing on the doc-QA workload (`python -m eval.route_eval`):
+
+| | value |
+|---|---|
+| Brain calls saved | **50%** (4/8 routed to the 4B worker) |
+| Routed accuracy | 100% |
+| Always-brain accuracy | 100% |
+
+→ Half the brain calls eliminated with no accuracy loss. The router is
+conservative (the worker could actually answer all 8), which is the safe
+direction. Caveat: the held-out router test is in-distribution (templated);
+novel-phrasing spot-checks pass but aren't a generalization benchmark.
+
+Reproduce: `make train-router && make route-eval`.
 
 ## Honest caveats (read these)
 

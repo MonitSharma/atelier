@@ -35,3 +35,7 @@ models/*.safetensors
 
 # OS
 .DS_Store
+
+# Router fine-tune: keep final adapter, drop intermediate checkpoints + logs
+models/router/adapter/*_adapters.safetensors
+models/router/train.log
