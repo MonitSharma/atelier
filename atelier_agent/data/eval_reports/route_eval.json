@@ -1,0 +1,58 @@
+{
+  "router_backend": "FineTunedRouter",
+  "n": 8,
+  "routed_to_worker": 4,
+  "brain_calls_saved_pct": 50.0,
+  "routed_accuracy": 1.0,
+  "always_brain_accuracy": 1.0,
+  "rows": [
+    {
+      "id": "binding-limit",
+      "difficulty": "hard",
+      "worker_correct": 1,
+      "brain_correct": 1
+    },
+    {
+      "id": "hard-constraints",
+      "difficulty": "easy",
+      "worker_correct": 1,
+      "brain_correct": 1
+    },
+    {
+      "id": "two-modes",
+      "difficulty": "hard",
+      "worker_correct": 1,
+      "brain_correct": 1
+    },
+    {
+      "id": "non-goals",
+      "difficulty": "hard",
+      "worker_correct": 1,
+      "brain_correct": 1
+    },
+    {
+      "id": "embedding-choice",
+      "difficulty": "easy",
+      "worker_correct": 1,
+      "brain_correct": 1
+    },
+    {
+      "id": "memory-table",
+      "difficulty": "easy",
+      "worker_correct": 1,
+      "brain_correct": 1
+    },
+    {
+      "id": "router-role",
+      "difficulty": "easy",
+      "worker_correct": 1,
+      "brain_correct": 1
+    },
+    {
+      "id": "privacy-feature",
+      "difficulty": "hard",
+      "worker_correct": 1,
+      "brain_correct": 1
+    }
+  ]
+}

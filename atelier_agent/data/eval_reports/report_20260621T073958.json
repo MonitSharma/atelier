@@ -1,0 +1,96 @@
+{
+  "timestamp": "2026-06-21T07:37:05.395972+00:00",
+  "brain_model": "qwen3:14b",
+  "embed_model": "BAAI/bge-base-en-v1.5",
+  "docqa": {
+    "rows": [
+      {
+        "id": "binding-limit",
+        "keyword": 1.0,
+        "retrieval_hit": 1,
+        "cited": 1,
+        "latency_s": 15.3,
+        "answer": "The binding limit is not the 36 GB of RAM. It is (a) the reasoning ceiling of a model small enough to run locally, and (b) error compounding across multi-step agent runs. Design around these [1].",
+        "correct": 1
+      },
+      {
+        "id": "hard-constraints",
+        "keyword": 1.0,
+        "retrieval_hit": 1,
+        "cited": 1,
+        "latency_s": 23.2,
+        "answer": "The hard, non-negotiable constraints of Atelier are as follows:\n\n| Constraint | Detail |\n|---|---|\n| **Hardware** | MacBook M3 Pro, 36 GB unified memory, macOS. This is the *only* machine. |\n| **Cost** | $0. No purchases, no subscriptions, ",
+        "correct": 1
+      },
+      {
+        "id": "two-modes",
+        "keyword": 1.0,
+        "retrieval_hit": 1,
+        "cited": 1,
+        "latency_s": 17.3,
+        "answer": "The agent has two capability modes:\n\n1. **Knowledge mode (research over my documents):** This mode ingests papers, notes, PDFs, and documents, retrieving and synthesizing answers grounded in them. It is verified using a graded Q&A evaluatio",
+        "correct": 1
+      },
+      {
+        "id": "non-goals",
+        "keyword": 1.0,
+        "retrieval_hit": 1,
+        "cited": 1,
+        "latency_s": 11.4,
+        "answer": "1. Beating frontier cloud coding agents (Claude Code, Cursor, etc.) [1].\n2. \"Magic\" / fully autonomous general agent [1].",
+        "correct": 1
+      },
+      {
+        "id": "embedding-choice",
+        "keyword": 0.5,
+        "retrieval_hit": 1,
+        "cited": 1,
+        "latency_s": 12.0,
+        "answer": "Atelier uses the `BAAI/bge-base-en-v1.5` embedding model, and it runs on an M3 Pro device [3].",
+        "correct": 1
+      },
+      {
+        "id": "memory-table",
+        "keyword": 1.0,
+        "retrieval_hit": 1,
+        "cited": 1,
+        "latency_s": 11.6,
+        "answer": "According to the table in your notes, a 13B-14B parameter model needs approximately 10 GB - 12 GB of memory [1].",
+        "correct": 1
+      }
+    ],
+    "aggregate": {
+      "correct": 1.0,
+      "keyword": 0.917,
+      "retrieval_hit": 1.0,
+      "cited": 1.0
+    }
+  },
+  "code": {
+    "rows": [
+      {
+        "id": "add_bug",
+        "solved": 1,
+        "steps": 5,
+        "tool_errors": 0,
+        "agent_finished": 1,
+        "latency_s": 33.7,
+        "test_summary": "..                                                                       [100%]"
+      },
+      {
+        "id": "offbyone",
+        "solved": 1,
+        "steps": 6,
+        "tool_errors": 0,
+        "agent_finished": 1,
+        "latency_s": 35.3,
+        "test_summary": "..                                                                       [100%]"
+      }
+    ],
+    "aggregate": {
+      "solved": 1.0,
+      "tool_errors": 0.0,
+      "steps": 5.5
+    }
+  }
+}

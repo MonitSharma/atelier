@@ -1,0 +1,326 @@
+{
+  "timestamp": "2026-06-22T01:01:26.557057+00:00",
+  "brain_model": "qwen3:14b",
+  "embed_model": "BAAI/bge-base-en-v1.5",
+  "combined": {
+    "rows": [
+      {
+        "id": "brain_model_policy",
+        "category": "knowledge_to_model_policy",
+        "difficulty": "easy",
+        "edit_scope": "single_line",
+        "solved": 1,
+        "tests_passed": 1,
+        "used_search_notes": 1,
+        "steps": 6,
+        "tool_errors": 0,
+        "tools_used": [
+          "search_notes",
+          "repo_map",
+          "read_file",
+          "edit_file",
+          "test_runner"
+        ],
+        "agent_finished": 1,
+        "runner_error": "",
+        "latency_s": 44.4,
+        "test_summary": ".                                                                        [100%]"
+      },
+      {
+        "id": "edit_tool_policy",
+        "category": "knowledge_to_tool_policy",
+        "difficulty": "medium",
+        "edit_scope": "multi_line",
+        "solved": 1,
+        "tests_passed": 1,
+        "used_search_notes": 1,
+        "steps": 8,
+        "tool_errors": 0,
+        "tools_used": [
+          "search_notes",
+          "repo_map",
+          "read_file",
+          "ast_edit",
+          "test_runner",
+          "ast_edit",
+          "test_runner"
+        ],
+        "agent_finished": 1,
+        "runner_error": "",
+        "latency_s": 62.3,
+        "test_summary": "..                                                                       [100%]"
+      },
+      {
+        "id": "embedding_model_policy",
+        "category": "knowledge_to_rag_policy",
+        "difficulty": "easy",
+        "edit_scope": "single_line",
+        "solved": 1,
+        "tests_passed": 1,
+        "used_search_notes": 1,
+        "steps": 8,
+        "tool_errors": 0,
+        "tools_used": [
+          "search_notes",
+          "repo_map",
+          "read_file",
+          "edit_file",
+          "test_runner",
+          "edit_file",
+          "test_runner"
+        ],
+        "agent_finished": 1,
+        "runner_error": "",
+        "latency_s": 64.6,
+        "test_summary": ".                                                                        [100%]"
+      },
+      {
+        "id": "license_preference",
+        "category": "knowledge_to_config",
+        "difficulty": "easy",
+        "edit_scope": "single_line",
+        "solved": 1,
+        "tests_passed": 1,
+        "used_search_notes": 1,
+        "steps": 6,
+        "tool_errors": 0,
+        "tools_used": [
+          "search_notes",
+          "repo_map",
+          "read_file",
+          "edit_file",
+          "test_runner"
+        ],
+        "agent_finished": 1,
+        "runner_error": "",
+        "latency_s": 40.5,
+        "test_summary": ".                                                                        [100%]"
+      },
+      {
+        "id": "locality_constraint",
+        "category": "knowledge_to_policy",
+        "difficulty": "easy",
+        "edit_scope": "single_line",
+        "solved": 1,
+        "tests_passed": 1,
+        "used_search_notes": 1,
+        "steps": 6,
+        "tool_errors": 0,
+        "tools_used": [
+          "search_notes",
+          "repo_map",
+          "read_file",
+          "edit_file",
+          "test_runner"
+        ],
+        "agent_finished": 1,
+        "runner_error": "",
+        "latency_s": 46.8,
+        "test_summary": ".                                                                        [100%]"
+      },
+      {
+        "id": "report_path_policy",
+        "category": "knowledge_to_observability",
+        "difficulty": "easy",
+        "edit_scope": "single_line",
+        "solved": 1,
+        "tests_passed": 1,
+        "used_search_notes": 1,
+        "steps": 6,
+        "tool_errors": 0,
+        "tools_used": [
+          "search_notes",
+          "repo_map",
+          "read_file",
+          "edit_file",
+          "test_runner"
+        ],
+        "agent_finished": 1,
+        "runner_error": "",
+        "latency_s": 47.9,
+        "test_summary": ".                                                                        [100%]"
+      },
+      {
+        "id": "router_policy",
+        "category": "knowledge_to_routing_policy",
+        "difficulty": "medium",
+        "edit_scope": "multi_line",
+        "solved": 1,
+        "tests_passed": 1,
+        "used_search_notes": 1,
+        "steps": 8,
+        "tool_errors": 0,
+        "tools_used": [
+          "search_notes",
+          "repo_map",
+          "read_file",
+          "ast_edit",
+          "test_runner",
+          "ast_edit",
+          "test_runner"
+        ],
+        "agent_finished": 1,
+        "runner_error": "",
+        "latency_s": 97.2,
+        "test_summary": "...                                                                      [100%]"
+      },
+      {
+        "id": "testing_preference",
+        "category": "knowledge_to_config",
+        "difficulty": "easy",
+        "edit_scope": "single_line",
+        "solved": 1,
+        "tests_passed": 1,
+        "used_search_notes": 1,
+        "steps": 6,
+        "tool_errors": 0,
+        "tools_used": [
+          "search_notes",
+          "repo_map",
+          "read_file",
+          "edit_file",
+          "test_runner"
+        ],
+        "agent_finished": 1,
+        "runner_error": "",
+        "latency_s": 30.7,
+        "test_summary": ".                                                                        [100%]"
+      },
+      {
+        "id": "trace_path_policy",
+        "category": "knowledge_to_observability",
+        "difficulty": "easy",
+        "edit_scope": "single_line",
+        "solved": 1,
+        "tests_passed": 1,
+        "used_search_notes": 1,
+        "steps": 6,
+        "tool_errors": 0,
+        "tools_used": [
+          "search_notes",
+          "repo_map",
+          "read_file",
+          "edit_file",
+          "test_runner"
+        ],
+        "agent_finished": 1,
+        "runner_error": "",
+        "latency_s": 44.3,
+        "test_summary": ".                                                                        [100%]"
+      },
+      {
+        "id": "vector_store_policy",
+        "category": "knowledge_to_rag_policy",
+        "difficulty": "easy",
+        "edit_scope": "single_line",
+        "solved": 1,
+        "tests_passed": 1,
+        "used_search_notes": 1,
+        "steps": 7,
+        "tool_errors": 0,
+        "tools_used": [
+          "search_notes",
+          "repo_map",
+          "read_file",
+          "test_runner",
+          "edit_file",
+          "test_runner"
+        ],
+        "agent_finished": 1,
+        "runner_error": "",
+        "latency_s": 47.3,
+        "test_summary": ".                                                                        [100%]"
+      }
+    ],
+    "aggregate": {
+      "solved": 1.0,
+      "tests_passed": 1.0,
+      "used_search_notes": 1.0,
+      "tool_errors": 0.0,
+      "steps": 6.7
+    },
+    "by_category": {
+      "knowledge_to_config": {
+        "solved": 1.0,
+        "tests_passed": 1.0,
+        "used_search_notes": 1.0,
+        "tool_errors": 0.0,
+        "steps": 6.0
+      },
+      "knowledge_to_model_policy": {
+        "solved": 1.0,
+        "tests_passed": 1.0,
+        "used_search_notes": 1.0,
+        "tool_errors": 0.0,
+        "steps": 6.0
+      },
+      "knowledge_to_observability": {
+        "solved": 1.0,
+        "tests_passed": 1.0,
+        "used_search_notes": 1.0,
+        "tool_errors": 0.0,
+        "steps": 6.0
+      },
+      "knowledge_to_policy": {
+        "solved": 1.0,
+        "tests_passed": 1.0,
+        "used_search_notes": 1.0,
+        "tool_errors": 0.0,
+        "steps": 6.0
+      },
+      "knowledge_to_rag_policy": {
+        "solved": 1.0,
+        "tests_passed": 1.0,
+        "used_search_notes": 1.0,
+        "tool_errors": 0.0,
+        "steps": 7.5
+      },
+      "knowledge_to_routing_policy": {
+        "solved": 1.0,
+        "tests_passed": 1.0,
+        "used_search_notes": 1.0,
+        "tool_errors": 0.0,
+        "steps": 8.0
+      },
+      "knowledge_to_tool_policy": {
+        "solved": 1.0,
+        "tests_passed": 1.0,
+        "used_search_notes": 1.0,
+        "tool_errors": 0.0,
+        "steps": 8.0
+      }
+    },
+    "by_difficulty": {
+      "easy": {
+        "solved": 1.0,
+        "tests_passed": 1.0,
+        "used_search_notes": 1.0,
+        "tool_errors": 0.0,
+        "steps": 6.375
+      },
+      "medium": {
+        "solved": 1.0,
+        "tests_passed": 1.0,
+        "used_search_notes": 1.0,
+        "tool_errors": 0.0,
+        "steps": 8.0
+      }
+    },
+    "by_edit_scope": {
+      "multi_line": {
+        "solved": 1.0,
+        "tests_passed": 1.0,
+        "used_search_notes": 1.0,
+        "tool_errors": 0.0,
+        "steps": 8.0
+      },
+      "single_line": {
+        "solved": 1.0,
+        "tests_passed": 1.0,
+        "used_search_notes": 1.0,
+        "tool_errors": 0.0,
+        "steps": 6.375
+      }
+    }
+  }
+}

@@ -1,0 +1,515 @@
+{
+  "timestamp": "2026-06-21T16:29:27.313999+00:00",
+  "brain_model": "qwen3:14b",
+  "embed_model": "BAAI/bge-base-en-v1.5",
+  "docqa": {
+    "rows": [
+      {
+        "id": "binding-limit",
+        "category": "constraints",
+        "difficulty": "easy",
+        "keyword": 1.0,
+        "retrieval_hit": 1,
+        "cited": 1,
+        "latency_s": 19.3,
+        "answer": "The binding limit is not the 36 GB of RAM. It is (a) the reasoning ceiling of a model small enough to run locally, and (b) error compounding across multi-step agent runs [1].",
+        "correct": 1
+      },
+      {
+        "id": "hard-constraints",
+        "category": "constraints",
+        "difficulty": "easy",
+        "keyword": 1.0,
+        "retrieval_hit": 1,
+        "cited": 1,
+        "latency_s": 18.7,
+        "answer": "The hard, non-negotiable constraints of Atelier are as follows:\n\n- **Hardware**: MacBook M3 Pro, 36 GB unified memory, macOS. This is the *only* machine [3].\n- **Cost**: $0. No purchases, no subscriptions, no cloud APIs, no rented compute. ",
+        "correct": 1
+      },
+      {
+        "id": "two-modes",
+        "category": "architecture",
+        "difficulty": "easy",
+        "keyword": 1.0,
+        "retrieval_hit": 1,
+        "cited": 1,
+        "latency_s": 12.6,
+        "answer": "The agent has two capability modes:\n\n1. **Knowledge mode** \u2014 research and synthesis over the user's own documents (RAG). This is verified by a graded Q&A eval set and retrieval-quality metrics [2].\n2. **Build mode** \u2014 developer tooling: rea",
+        "correct": 1
+      },
+      {
+        "id": "non-goals",
+        "category": "constraints",
+        "difficulty": "easy",
+        "keyword": 1.0,
+        "retrieval_hit": 1,
+        "cited": 1,
+        "latency_s": 10.8,
+        "answer": "- Beating frontier cloud coding agents (Claude Code, Cursor, etc.) [1]\n- \"Magic\" / fully autonomous general agent [1]",
+        "correct": 1
+      },
+      {
+        "id": "embedding-choice",
+        "category": "rag",
+        "difficulty": "easy",
+        "keyword": 0.0,
+        "retrieval_hit": 1,
+        "cited": 0,
+        "latency_s": 4.5,
+        "answer": "I don't find that in your notes.",
+        "correct": 0
+      },
+      {
+        "id": "memory-table",
+        "category": "hardware",
+        "difficulty": "easy",
+        "keyword": 1.0,
+        "retrieval_hit": 1,
+        "cited": 1,
+        "latency_s": 12.8,
+        "answer": "According to the table in your notes, a 13B-14B parameter model needs approximately 10 GB - 12 GB of memory [1].",
+        "correct": 1
+      },
+      {
+        "id": "router-role",
+        "category": "routing",
+        "difficulty": "easy",
+        "keyword": 1.0,
+        "retrieval_hit": 1,
+        "cited": 1,
+        "latency_s": 17.2,
+        "answer": "The fine-tuned small model serves as a **cheap component** and **router** in the project. It is used to classify tasks as `easy` or `hard`, allowing the system to direct easy subtasks to the cheaper worker (the small model) and reserve the ",
+        "correct": 1
+      },
+      {
+        "id": "privacy-feature",
+        "category": "constraints",
+        "difficulty": "easy",
+        "keyword": 1.0,
+        "retrieval_hit": 1,
+        "cited": 1,
+        "latency_s": 11.1,
+        "answer": "Running everything locally is treated as a feature because it ensures that the user's documents and code never leave the machine, which enhances privacy. This local-only approach is highlighted as a real selling point for a knowledge agent ",
+        "correct": 1
+      },
+      {
+        "id": "react-reliability-properties",
+        "category": "agent",
+        "difficulty": "medium",
+        "keyword": 0.6666666666666666,
+        "retrieval_hit": 0,
+        "cited": 1,
+        "latency_s": 12.3,
+        "answer": "The ReAct engine uses the following reliability properties to avoid crashing or bloating context:\n\n- **Reflection**: Tool/parse errors are fed back as observations, not crashes [1].\n- **Observation capping**: Big outputs are truncated befor",
+        "correct": 1
+      },
+      {
+        "id": "hybrid-retrieval-pipeline",
+        "category": "rag",
+        "difficulty": "medium",
+        "keyword": 1.0,
+        "retrieval_hit": 0,
+        "cited": 1,
+        "latency_s": 12.5,
+        "answer": "Atelier retrieves context at query time using a hybrid approach that combines dense retrieval (via ChromaDB) and BM25, followed by a fusion method called RRF (Reciprocal Rank Fusion). This process is then optionally followed by a reranking ",
+        "correct": 1
+      },
+      {
+        "id": "build-task-arc",
+        "category": "agent",
+        "difficulty": "medium",
+        "keyword": 1.0,
+        "retrieval_hit": 0,
+        "cited": 1,
+        "latency_s": 10.8,
+        "answer": "The typical tool sequence for fixing a failing test in build mode is: `repo_map \u2192 read_file \u2192 edit_file \u2192 test_runner` [1].",
+        "correct": 1
+      },
+      {
+        "id": "eval-report-location",
+        "category": "evaluation",
+        "difficulty": "easy",
+        "keyword": 1.0,
+        "retrieval_hit": 0,
+        "cited": 1,
+        "latency_s": 9.6,
+        "answer": "The `eval` command writes its JSON reports to `data/eval_reports/` [1].",
+        "correct": 1
+      },
+      {
+        "id": "regression-gate",
+        "category": "evaluation",
+        "difficulty": "medium",
+        "keyword": 0.5,
+        "retrieval_hit": 1,
+        "cited": 1,
+        "latency_s": 11.2,
+        "answer": "The eval regression gate checks for any drop in metrics compared to the last report, specifically looking at changes that lower `correct` / `retrieval_hit` / `solved` [1]. It is designed to fail if such a drop is detected, ensuring that any",
+        "correct": 1
+      },
+      {
+        "id": "code-exec-sandbox",
+        "category": "tools",
+        "difficulty": "medium",
+        "keyword": 0.6666666666666666,
+        "retrieval_hit": 0,
+        "cited": 1,
+        "latency_s": 13.0,
+        "answer": "The code execution tool is sandboxed using subprocess limits, temporary directories, and by default, no network access. This is specified in the context as follows: \"Sandboxing: code execution must be sandboxed even locally (subprocess limi",
+        "correct": 1
+      },
+      {
+        "id": "model-roles",
+        "category": "models",
+        "difficulty": "easy",
+        "keyword": 1.0,
+        "retrieval_hit": 0,
+        "cited": 1,
+        "latency_s": 17.7,
+        "answer": "The default local model roles and the models that back each role are as follows:\n\n- `brain`: `qwen3:14b` \u2014 used for reasoning and build mode.\n- `worker`: `qwen3:4b` \u2014 used for cheap subtasks and as the LLM-judge.\n- `heavy`: `gemma4:26b` \u2014 u",
+        "correct": 1
+      },
+      {
+        "id": "median-failure-finding",
+        "category": "evaluation",
+        "difficulty": "medium",
+        "keyword": 1.0,
+        "retrieval_hit": 0,
+        "cited": 1,
+        "latency_s": 13.5,
+        "answer": "The median_bug eval revealed that the local 14B model reliably makes single-line fixes but is unreliable on multi-line structural edits [1].",
+        "correct": 1
+      },
+      {
+        "id": "syntax-check-mitigation",
+        "category": "tools",
+        "difficulty": "medium",
+        "keyword": 1.0,
+        "retrieval_hit": 1,
+        "cited": 1,
+        "latency_s": 14.5,
+        "answer": "The mitigation added after the multi-line edit failure finding is that `write_file`/`edit_file` now run a Python `compile()` check and return `syntax_ok` / `syntax_error`, so the agent is told immediately when an edit breaks the file (and t",
+        "correct": 1
+      },
+      {
+        "id": "reproduce-target",
+        "category": "usage",
+        "difficulty": "easy",
+        "keyword": 0.75,
+        "retrieval_hit": 1,
+        "cited": 1,
+        "latency_s": 11.4,
+        "answer": "The `make reproduce` target sets up the environment, installs necessary components, runs tests, evaluates the model, trains and evaluates the router, and produces artifacts such as the trained adapter, JSON reports, and per-run traces. It e",
+        "correct": 1
+      }
+    ],
+    "aggregate": {
+      "correct": 0.944,
+      "keyword": 0.866,
+      "retrieval_hit": 0.611,
+      "cited": 0.944
+    },
+    "by_category": {
+      "agent": {
+        "correct": 1.0,
+        "keyword": 0.833,
+        "retrieval_hit": 0.0,
+        "cited": 1.0
+      },
+      "architecture": {
+        "correct": 1.0,
+        "keyword": 1.0,
+        "retrieval_hit": 1.0,
+        "cited": 1.0
+      },
+      "constraints": {
+        "correct": 1.0,
+        "keyword": 1.0,
+        "retrieval_hit": 1.0,
+        "cited": 1.0
+      },
+      "evaluation": {
+        "correct": 1.0,
+        "keyword": 0.833,
+        "retrieval_hit": 0.333,
+        "cited": 1.0
+      },
+      "hardware": {
+        "correct": 1.0,
+        "keyword": 1.0,
+        "retrieval_hit": 1.0,
+        "cited": 1.0
+      },
+      "models": {
+        "correct": 1.0,
+        "keyword": 1.0,
+        "retrieval_hit": 0.0,
+        "cited": 1.0
+      },
+      "rag": {
+        "correct": 0.5,
+        "keyword": 0.5,
+        "retrieval_hit": 0.5,
+        "cited": 0.5
+      },
+      "routing": {
+        "correct": 1.0,
+        "keyword": 1.0,
+        "retrieval_hit": 1.0,
+        "cited": 1.0
+      },
+      "tools": {
+        "correct": 1.0,
+        "keyword": 0.833,
+        "retrieval_hit": 0.5,
+        "cited": 1.0
+      },
+      "usage": {
+        "correct": 1.0,
+        "keyword": 0.75,
+        "retrieval_hit": 1.0,
+        "cited": 1.0
+      }
+    },
+    "by_difficulty": {
+      "easy": {
+        "correct": 0.909,
+        "keyword": 0.886,
+        "retrieval_hit": 0.818,
+        "cited": 0.909
+      },
+      "medium": {
+        "correct": 1.0,
+        "keyword": 0.833,
+        "retrieval_hit": 0.286,
+        "cited": 1.0
+      }
+    }
+  },
+  "code": {
+    "rows": [
+      {
+        "id": "add_bug",
+        "category": "arithmetic",
+        "difficulty": "easy",
+        "edit_scope": "single_line",
+        "solved": 1,
+        "steps": 5,
+        "tool_errors": 0,
+        "agent_finished": 1,
+        "latency_s": 34.8,
+        "test_summary": "..                                                                       [100%]"
+      },
+      {
+        "id": "clamp_bounds",
+        "category": "api_misuse",
+        "difficulty": "easy",
+        "edit_scope": "single_line",
+        "solved": 1,
+        "steps": 6,
+        "tool_errors": 0,
+        "agent_finished": 1,
+        "latency_s": 42.7,
+        "test_summary": "...                                                                      [100%]"
+      },
+      {
+        "id": "fibonacci_base",
+        "category": "off_by_one",
+        "difficulty": "easy",
+        "edit_scope": "single_line",
+        "solved": 1,
+        "steps": 6,
+        "tool_errors": 0,
+        "agent_finished": 1,
+        "latency_s": 40.9,
+        "test_summary": "...                                                                      [100%]"
+      },
+      {
+        "id": "flatten_nested",
+        "category": "structural_logic",
+        "difficulty": "medium",
+        "edit_scope": "multi_line",
+        "solved": 1,
+        "steps": 6,
+        "tool_errors": 0,
+        "agent_finished": 1,
+        "latency_s": 37.5,
+        "test_summary": "...                                                                      [100%]"
+      },
+      {
+        "id": "inventory_total",
+        "category": "arithmetic",
+        "difficulty": "easy",
+        "edit_scope": "single_line",
+        "solved": 1,
+        "steps": 5,
+        "tool_errors": 0,
+        "agent_finished": 1,
+        "latency_s": 27.6,
+        "test_summary": "..                                                                       [100%]"
+      },
+      {
+        "id": "median_bug",
+        "category": "structural_logic",
+        "difficulty": "medium",
+        "edit_scope": "multi_line",
+        "solved": 0,
+        "steps": 12,
+        "tool_errors": 4,
+        "agent_finished": 0,
+        "latency_s": 53.3,
+        "test_summary": "FAILED .eval_workspace/median_bug/test_statsutils.py::test_median_even - asse..."
+      },
+      {
+        "id": "merge_defaults",
+        "category": "mutation",
+        "difficulty": "medium",
+        "edit_scope": "single_line",
+        "solved": 1,
+        "steps": 8,
+        "tool_errors": 0,
+        "agent_finished": 1,
+        "latency_s": 51.4,
+        "test_summary": "..                                                                       [100%]"
+      },
+      {
+        "id": "moving_average",
+        "category": "off_by_one",
+        "difficulty": "easy",
+        "edit_scope": "single_line",
+        "solved": 1,
+        "steps": 5,
+        "tool_errors": 0,
+        "agent_finished": 1,
+        "latency_s": 28.4,
+        "test_summary": "..                                                                       [100%]"
+      },
+      {
+        "id": "normalize_scores",
+        "category": "structural_logic",
+        "difficulty": "medium",
+        "edit_scope": "multi_line",
+        "solved": 1,
+        "steps": 6,
+        "tool_errors": 0,
+        "agent_finished": 1,
+        "latency_s": 37.0,
+        "test_summary": "...                                                                      [100%]"
+      },
+      {
+        "id": "offbyone",
+        "category": "off_by_one",
+        "difficulty": "easy",
+        "edit_scope": "single_line",
+        "solved": 1,
+        "steps": 6,
+        "tool_errors": 0,
+        "agent_finished": 1,
+        "latency_s": 31.4,
+        "test_summary": "..                                                                       [100%]"
+      },
+      {
+        "id": "parse_bool_case",
+        "category": "normalization",
+        "difficulty": "medium",
+        "edit_scope": "multi_line",
+        "solved": 1,
+        "steps": 8,
+        "tool_errors": 0,
+        "agent_finished": 1,
+        "latency_s": 58.9,
+        "test_summary": "...                                                                      [100%]"
+      },
+      {
+        "id": "slugify_spaces",
+        "category": "normalization",
+        "difficulty": "easy",
+        "edit_scope": "single_line",
+        "solved": 1,
+        "steps": 6,
+        "tool_errors": 0,
+        "agent_finished": 1,
+        "latency_s": 33.9,
+        "test_summary": "..                                                                       [100%]"
+      },
+      {
+        "id": "unique_preserve_order",
+        "category": "order_preservation",
+        "difficulty": "medium",
+        "edit_scope": "multi_line",
+        "solved": 1,
+        "steps": 5,
+        "tool_errors": 0,
+        "agent_finished": 1,
+        "latency_s": 31.4,
+        "test_summary": "..                                                                       [100%]"
+      }
+    ],
+    "aggregate": {
+      "solved": 0.923,
+      "tool_errors": 0.308,
+      "steps": 6.462
+    },
+    "by_category": {
+      "api_misuse": {
+        "solved": 1.0,
+        "tool_errors": 0.0,
+        "steps": 6.0
+      },
+      "arithmetic": {
+        "solved": 1.0,
+        "tool_errors": 0.0,
+        "steps": 5.0
+      },
+      "mutation": {
+        "solved": 1.0,
+        "tool_errors": 0.0,
+        "steps": 8.0
+      },
+      "normalization": {
+        "solved": 1.0,
+        "tool_errors": 0.0,
+        "steps": 7.0
+      },
+      "off_by_one": {
+        "solved": 1.0,
+        "tool_errors": 0.0,
+        "steps": 5.667
+      },
+      "order_preservation": {
+        "solved": 1.0,
+        "tool_errors": 0.0,
+        "steps": 5.0
+      },
+      "structural_logic": {
+        "solved": 0.667,
+        "tool_errors": 1.333,
+        "steps": 8.0
+      }
+    },
+    "by_difficulty": {
+      "easy": {
+        "solved": 1.0,
+        "tool_errors": 0.0,
+        "steps": 5.571
+      },
+      "medium": {
+        "solved": 0.833,
+        "tool_errors": 0.667,
+        "steps": 7.5
+      }
+    },
+    "by_edit_scope": {
+      "multi_line": {
+        "solved": 0.8,
+        "tool_errors": 0.8,
+        "steps": 7.4
+      },
+      "single_line": {
+        "solved": 1.0,
+        "tool_errors": 0.0,
+        "steps": 5.875
+      }
+    }
+  }
+}

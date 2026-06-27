@@ -1,0 +1,123 @@
+{
+  "timestamp": "2026-06-21T12:31:12.363666+00:00",
+  "brain_model": "qwen3:14b",
+  "embed_model": "BAAI/bge-base-en-v1.5",
+  "docqa": {
+    "rows": [
+      {
+        "id": "binding-limit",
+        "keyword": 1.0,
+        "retrieval_hit": 1,
+        "cited": 1,
+        "latency_s": 9.3,
+        "answer": "The binding limit of the project is not the 36 GB of RAM. It is (a) the reasoning ceiling of a model small enough to run locally, and (b) error compounding across multi-step agent runs [1].",
+        "correct": 1
+      },
+      {
+        "id": "hard-constraints",
+        "keyword": 1.0,
+        "retrieval_hit": 1,
+        "cited": 1,
+        "latency_s": 28.4,
+        "answer": "The hard, non-negotiable constraints of Atelier are as follows:\n\n- **Hardware:** The only machine allowed is a MacBook M3 Pro with 36 GB unified memory running macOS [1].\n- **Cost:** No purchases, subscriptions, cloud APIs, or rented comput",
+        "correct": 1
+      },
+      {
+        "id": "two-modes",
+        "keyword": 1.0,
+        "retrieval_hit": 1,
+        "cited": 0,
+        "latency_s": 17.3,
+        "answer": "The agent has two capability modes:\n\n1. **Knowledge mode** \u2014 research and synthesis over the agent's own documents (RAG). This is verified by a graded Q&A evaluation set and retrieval-quality metrics.\n2. **Build mode** \u2014 developer tooling, ",
+        "correct": 1
+      },
+      {
+        "id": "non-goals",
+        "keyword": 1.0,
+        "retrieval_hit": 1,
+        "cited": 0,
+        "latency_s": 15.6,
+        "answer": "1. Beating frontier cloud coding agents (Claude Code, Cursor, etc.). Will not happen with a local small model; not the goal.\n2. \"Magic\" / fully autonomous general agent. Aim for *reliable and narrow*, not magical and broad.",
+        "correct": 1
+      },
+      {
+        "id": "embedding-choice",
+        "keyword": 0.5,
+        "retrieval_hit": 1,
+        "cited": 1,
+        "latency_s": 20.2,
+        "answer": "Atelier uses the `BAAI/bge-base-en-v1.5` embedding model, and it runs on an M3 Pro device [3].",
+        "correct": 1
+      },
+      {
+        "id": "memory-table",
+        "keyword": 1.0,
+        "retrieval_hit": 1,
+        "cited": 1,
+        "latency_s": 15.1,
+        "answer": "According to the notes table, a 13B-14B parameter model needs approximately 10 GB - 12 GB of memory [1].",
+        "correct": 1
+      },
+      {
+        "id": "router-role",
+        "keyword": 1.0,
+        "retrieval_hit": 1,
+        "cited": 1,
+        "latency_s": 19.1,
+        "answer": "The fine-tuned small model serves as a **router/cheap worker** in the project. It is used to handle easy subtasks, thereby reducing the load on the main brain model and reserving it for more complex tasks [2].",
+        "correct": 1
+      },
+      {
+        "id": "privacy-feature",
+        "keyword": 1.0,
+        "retrieval_hit": 1,
+        "cited": 1,
+        "latency_s": 15.8,
+        "answer": "Running everything locally is treated as a feature because it ensures that the user's documents and code never leave the machine, which is a significant privacy benefit. This local-only approach is highlighted as a real selling point for a ",
+        "correct": 1
+      }
+    ],
+    "aggregate": {
+      "correct": 1.0,
+      "keyword": 0.938,
+      "retrieval_hit": 1.0,
+      "cited": 0.75
+    }
+  },
+  "code": {
+    "rows": [
+      {
+        "id": "add_bug",
+        "solved": 1,
+        "steps": 5,
+        "tool_errors": 0,
+        "agent_finished": 1,
+        "latency_s": 72.7,
+        "test_summary": "..                                                                       [100%]"
+      },
+      {
+        "id": "median_bug",
+        "solved": 0,
+        "steps": 12,
+        "tool_errors": 0,
+        "agent_finished": 0,
+        "latency_s": 137.1,
+        "test_summary": "!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!"
+      },
+      {
+        "id": "offbyone",
+        "solved": 1,
+        "steps": 6,
+        "tool_errors": 0,
+        "agent_finished": 1,
+        "latency_s": 38.9,
+        "test_summary": "..                                                                       [100%]"
+      }
+    ],
+    "aggregate": {
+      "solved": 0.667,
+      "tool_errors": 0.0,
+      "steps": 7.667
+    }
+  }
+}
